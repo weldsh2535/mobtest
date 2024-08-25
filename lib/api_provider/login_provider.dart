@@ -17,9 +17,7 @@ class LoginProvider {
               {"email": user.email, "password": user.password}));
       if (response.statusCode == 201) {
         final value = LoginResponse.fromJson(jsonDecode(response.body));
-        // setToken(value.token.toString());
-        // setLoginResponse(value);
-        // //print("the value aman firstname is ${value.user!.firstName}");
+        AppUrls.setToken(value.token.toString());
         return value;
       }
       // //print("the status code two is ${response.statusCode}");

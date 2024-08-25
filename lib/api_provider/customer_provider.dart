@@ -5,13 +5,29 @@ import 'package:http/http.dart' as http;
 
 class CustomerProvider {
   Future<CustomerModel> fetchCustomer() async {
-    final response = await http.get(Uri.parse('${AppUrls.newsAPIBaseURL}/listview'));
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonData = jsonDecode(response.body);
-      return CustomerModel.fromJson(jsonData['users']);
+    try {
+      String? token = await AppUrls.getToken();
 
-    } else {
-      throw Exception('Failed to fetch data');
+      if (token == null) {
+        throw Exception('Token is null');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrls.newsAPIBaseURL}/listview'),
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> jsonData = jsonDecode(response.body);
+        return CustomerModel.fromJson(jsonData['users']);
+      } else {
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching customer data: $e');
+      rethrow;
     }
   }
 }
